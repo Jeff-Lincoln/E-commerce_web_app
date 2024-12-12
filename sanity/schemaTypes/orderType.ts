@@ -1,0 +1,360 @@
+import { BasketIcon } from "@sanity/icons";
+import { defineArrayMember, defineField, defineType } from "sanity";
+
+export const orderType = defineType({
+  name: "order",
+  title: "Order",
+  type: "document",
+  icon: BasketIcon,
+  fields: [
+    defineField({
+      name: "orderNumber",
+      title: "Order Number",
+      type: "string",
+      validation: (Rule) => Rule.required().error("Order Number is required."),
+    }),
+    defineField({
+      name: "stripeCheckoutSessionId",
+      title: "Stripe Checkout Session ID",
+      type: "string",
+    }),
+    defineField({
+      name: "stripeCustomerId",
+      title: "Stripe Customer ID",
+      type: "string",
+      validation: (Rule) => Rule.required().error("Stripe Customer ID is required."),
+    }),
+    defineField({
+      name: "clerkUserId",
+      title: "Store User ID",
+      type: "string",
+      validation: (Rule) => Rule.required().error("Store User ID is required."),
+    }),
+    defineField({
+      name: "customerName",
+      title: "Customer Name",
+      type: "string",
+      validation: (Rule) => Rule.required().error("Customer Name is required."),
+    }),
+    defineField({
+      name: "email",
+      title: "Customer Email",
+      type: "string",
+      validation: (Rule) => Rule.required().email().error("Valid email is required."),
+    }),
+    defineField({
+      name: "stripePaymentIntentId",
+      title: "Stripe Payment Intent ID",
+      type: "string",
+      validation: (Rule) => Rule.required().error("Stripe Payment Intent ID is required."),
+    }),
+    defineField({
+      name: "products",
+      title: "Products",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "object",
+          fields: [
+            defineField({
+              name: "product",
+              title: "Product Bought",
+              type: "reference",
+              to: [{ type: "product" }],
+              validation: (Rule) => Rule.required().error("Product reference is required."),
+            }),
+            defineField({
+              name: "quantity",
+              title: "Quantity Purchased",
+              type: "number",
+              validation: (Rule) => Rule.min(1).error("Quantity must be at least 1."),
+            }),
+          ],
+          preview: {
+            select: {
+              product: "product.name",
+              quantity: "quantity",
+              image: "product.image",
+              price: "product.price",
+              currency: "product.currency",
+            },
+            prepare({ product, quantity, image, price, currency }) {
+              return {
+                title: `${product} x ${quantity}`,
+                media: image,
+                subtitle: `${price * quantity} ${currency}`,
+              };
+            },
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: "currency",
+      title: "Currency",
+      type: "string",
+      validation: (Rule) => Rule.required().error("Currency is required."),
+    }),
+    defineField({
+      name: "amountDiscount",
+      title: "Amount Discount",
+      type: "number",
+      validation: (Rule) => Rule.min(0).error("Discount must be a non-negative value."),
+    }),
+    defineField({
+      name: "status",
+      title: "Order Status",
+      type: "string",
+      options: {
+        list: [
+          { title: "Pending", value: "pending" },
+          { title: "Paid", value: "paid" },
+          { title: "Shipped", value: "shipped" },
+          { title: "Delivered", value: "delivered" },
+          { title: "Cancelled", value: "cancelled" },
+        ],
+      },
+      validation: (Rule) => Rule.required().error("Order Status is required."),
+    }),
+    defineField({
+      name: "orderDate",
+      title: "Order Date",
+      type: "datetime",
+      validation: (Rule) => Rule.required().error("Order Date is required."),
+    }),
+  ],
+  preview: {
+    select: {
+      name: "customerName",
+      amount: "totalPrice",
+      currency: "currency",
+      orderId: "orderNumber",
+      email: "email",
+    },
+    prepare({ name, amount, currency, orderId, email }) {
+      const orderIdSnippet = orderId ? `${orderId.slice(0, 5)}...${orderId.slice(-5)}` : "N/A";
+      return {
+        title: `${name} (${orderIdSnippet})`,
+        subtitle: `${amount} ${currency}, ${email}`,
+        media: BasketIcon,
+      };
+    },
+  },
+});
+
+
+
+// import { BasketIcon } from "@sanity/icons";
+// import { defineArrayMember, defineField, defineType } from "sanity";
+
+// export const orderType = defineType({
+//   name: "order",
+//   title: "Order",
+//   type: "document",
+//   icon: BasketIcon,
+//   fields: [
+//     defineField({
+//       name: "orderNumber",
+//       title: "Order Number",
+//       type: "string",
+//       validation: (Rule) => Rule.required(),
+//     }),
+//     defineField({
+//       name: "stripeCheckoutSessionId",
+//       title: "Stripe Checkout Session ID",
+//       type: "string",
+//     }),
+//     defineField({
+//       name: "stripeCustomerId", // Corrected typo (was 'stipeCustomerId')
+//       title: "Stripe Customer ID",
+//       type: "string",
+//       validation: (Rule) => Rule.required().error("Stripe Customer ID is required."),
+//     }),
+//     defineField({
+//       name: "clerkuserId", // Corrected typo (was 'stipeCustomerId')
+//       title: "Store User Id",
+//       type: "string",
+//       validation: (Rule) => Rule.required().error("Stripe Customer ID is required."),
+//     }),
+//     defineField({
+//       name: "customerName", // Corrected typo (was 'stipeCustomerId')
+//       title: "customer Name",
+//       type: "string",
+//       validation: (Rule) => Rule.required().error("Stripe Customer ID is required."),
+//     }),
+//     defineField({
+//       name: "email", // Corrected typo (was 'stipeCustomerId')
+//       title: "Customer Name",
+//       type: "string",
+//       validation: (Rule) => Rule.required().email(),
+//     }),
+//     defineField({
+//       name: "stripePaymentIntentId", // Corrected typo (was 'stipeCustomerId')
+//       title: "Stripe Payment Intent ID",
+//       type: "string",
+//       validation: (Rule) => Rule.required(),
+//     }),
+//     defineField({
+//       name: "products",
+//       title: "Products",
+//       type: "array",
+//       of: [
+//         defineArrayMember({
+//           type: "object",
+//           fields: [
+//             defineField({
+//               name: "product",
+//               title: "Product Bought",
+//               type: "reference",
+//               to: [{ type: "product" }],
+//               // validation: (Rule) => Rule.required().error("Product reference is required."),
+//             }),
+//             defineField({
+//               name: "quantity",
+//               title: "Quantity Purchased",
+//               type: "number",
+//             }),
+//           ],
+//           preview: {
+//             select: {
+//               product: "product.name",
+//               quantity: "quantity",
+//               image: "product.image",
+//               price: "product.price",
+//               currency: "product.currency",
+//             },
+//             prepare(select) {
+//               return {
+//                 title: `${select.product} x  ${select.quantity}`,
+//                 media: select.image,
+//                 subtitle: `${select.price * select.quantity}`,
+//               };
+//             },
+//             }
+//           },
+//         }),
+//         defineField({
+//           name: 'currency',
+//           title: 'Currency',
+//           type: 'string',
+//           validation: (Rule) => Rule.required().error("Currency is required."),
+//         }),
+//         defineField({
+//           name: 'amountDiscount',
+//           title: 'Amount Discount',
+//           type: 'number',
+//           validation: (Rule) => Rule.min(0),
+//         }),
+//         defineField({
+//           name: 'status',
+//           title: 'Order Status',
+//           type: 'string',
+//           options: [
+//             list: [
+//               { title: 'Pending', value: 'pending' },
+//               { title: 'Paid', value: 'paid' },
+//             { title: 'Shipped', value: 'shipped' },
+//             { title: 'Delivered', value: 'Delivered' },
+
+//             { title: 'Cancelled', value: 'cancelled' },
+//             ]
+//           ],
+//         }),
+//         defineField({
+//           name: 'orderDate',
+//           title: 'order Date',
+//           type: 'datetime',
+//           validation: (Rule) => Rule.required().error("Order Date is required."),
+//         }),
+//       ],
+//       preview: {
+//         select: {
+//           name: 'customerName',
+//           amount: 'totalPrice',
+//           currency: 'currency',
+//           orderId: 'OrderNumber',
+//           email: "email",
+//         },
+//         prepare(select) {
+//           const orderIdSnippet = `${select.orderId.slice(0, 5)}...${select.orderId.slice(-5)}`
+//           return {
+//             title: `${select.name} (${orderIdSnippet})`,
+//             subtitle: `${select.amount} ${select.currency}, ${select.email}`,
+//             media: BasketIcon,
+//           };
+//         }
+//       }
+//     }),
+//   ],
+// });
+
+
+
+// // import { BasketIcon } from "@sanity/icons";
+// // import { defineArrayMember, defineField, defineType } from "sanity";
+
+// // export const orderType = defineType({
+// //     name:'order',
+// //     title: 'Order',
+// //     type: 'document',
+// //     icon: BasketIcon,
+// //     fields: [
+// //         defineField({
+// //             name: 'orderNumber',
+// //             title: 'Order Number',
+// //             type: 'string',
+// //             validation: (Rule) => Rule.required(),
+// //         }),
+// //         defineField({
+// //             name: 'stripeCheckoutSessionId',
+// //             title: 'Stripe Checkout Session ID',
+// //             type: 'string',
+// //         }),
+// //         defineField({
+// //             name: 'stipeCustomerId',
+// //             title: 'Stripe Customer ID',
+// //             type: 'string',
+// //             validation: (Rule) => Rule.required(),
+// //         }),
+// //         defineField({
+// //             name: 'products',
+// //             title: 'Products',
+// //             type: 'array',
+// //             of: [
+// //                 defineArrayMember({
+// //                     type: 'object',
+// //                     fields: [
+// //                         defineField({
+// //                             name: 'product',
+// //                             title: 'Product Bought',
+// //                             type: 'reference',
+// //                             to: [{ type: 'product' }],
+// //                         }),
+// //                         defineField({
+// //                             name: 'quantity',
+// //                             title: 'Quantity Purchased',
+// //                             type: 'number',
+// //                         }),
+// //                     ],
+// //                     preview: {
+// //                         select: {
+// //                             product: 'product.name',
+// //                             quantity: 'quantity',
+// //                             image: "product.image",
+// //                             price: 'product.price',
+// //                             currency: 'product.currency',
+// //                         },
+// //                         prepare(select) {
+// //                             return {
+// //                                 title: `${select.product} x  ${select.quantity}`,
+// //                                 media: select.image,
+// //                                 subtitle: `${select.price * select.quantity}`,
+// //                             };
+// //                         },
+// //                     },
+// //                     ]
+// //                 })
+// //             ]
+// //         }),
+// //     ]
+// // })
