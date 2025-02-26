@@ -12,20 +12,26 @@ import Loader from '@/components/Loader';
 import { ShoppingBag, ArrowLeft, Heart, Trash2, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createCheckOutSession, Metadata } from '@/actions/createCheckOutSession';
+import { Button } from '@/components/ui/button';
 
 
 
 function BasketPage() {
   const [isClient, setIsClient] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(null);
-  const [isHovered, setIsHovered] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isHovered, setIsHovered] = useState(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
   const groupedItems = useBasketStore((state) => state.getGroupedItems());
   // const removeFromBasket = useBasketStore((state) => state.removeFromBasket);
   const { isSignedIn, isLoaded } = useAuth();
   const { user } = useUser();
   const router = useRouter();
+
+  if (showAuthModal && isLoading) {
+    console.log("Auth Modal is visible");
+}
+
 
   useEffect(() => {
     setIsClient(true);
@@ -88,7 +94,7 @@ function BasketPage() {
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-gray-900">Your Basket is Empty</h1>
           <p className="text-xl text-gray-600 max-w-md">
-            Looks like you haven't added anything yet. Start shopping to fill your basket with amazing products!
+            Looks like you have not added anything yet. Start shopping to fill your basket with amazing products!
           </p>
         </div>
         <motion.button
@@ -131,8 +137,8 @@ function BasketPage() {
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                   key={item.product._id}
                   className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300"
-                  onMouseEnter={() => setIsHovered(item.product._id)}
-                  onMouseLeave={() => setIsHovered(null)}
+                  // onMouseEnter={() => setIsHovered(item.product._id)}
+                  // onMouseLeave={() => setIsHovered(null)}
                 >
                   <div className="p-6 flex flex-col sm:flex-row items-start sm:items-center gap-6">
                     <div 
@@ -148,9 +154,9 @@ function BasketPage() {
                           className="group-hover:scale-110 transition-transform duration-500"
                         />
                       )}
-                      {isHovered === item.product._id && (
+                      {/* {isHovered === item.product._id && (
                         <div className="absolute inset-0 bg-black bg-opacity-20 transition-opacity duration-300" />
-                      )}
+                      )} */}
                     </div>
 
                     <div className="flex-grow min-w-0 space-y-4">
@@ -165,18 +171,18 @@ function BasketPage() {
                           <p className="text-gray-500 mt-1">Unit Price: Shs {item.product.price?.toFixed(2)}</p>
                         </div>
                         <div className="flex items-center space-x-4">
-                          <button 
+                          <Button 
                             onClick={(e) => {
                               e.stopPropagation();
-                              setShowConfirmDelete(item.product._id);
+                              // setShowConfirmDelete(item.product._id);
                             }}
                             className="text-gray-400 hover:text-red-500 transition-colors duration-200"
                           >
                             <Trash2 size={20} />
-                          </button>
-                          <button className="text-gray-400 hover:text-pink-500 transition-colors duration-200">
+                          </Button>
+                          <Button className="text-gray-400 hover:text-pink-500 transition-colors duration-200">
                             <Heart size={20} />
-                          </button>
+                          </Button>
                         </div>
                       </div>
 
@@ -207,7 +213,7 @@ function BasketPage() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                removeFromBasket(item.product);
+                                // removeFromBasket(item.product);
                                 setShowConfirmDelete(null);
                               }}
                               className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
