@@ -2,11 +2,10 @@ import ProductGrid from '@/components/ProductGrid';
 import { searchProductsByName } from '@/sanity/lib/products/searchProductsByName';
 import React from 'react';
 
-// This is the correct way to type a page component in Next.js 15
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams?: { query?: string };
+  searchParams?: Record<string, string | undefined>;
 }) {
   const query = searchParams?.query || '';
   const products = await searchProductsByName(query);
@@ -37,6 +36,7 @@ export default async function SearchPage({
     </div>
   );
 }
+
 
 
 // import ProductGrid from '@/components/ProductGrid';
