@@ -1,16 +1,14 @@
 import ProductGrid from '@/components/ProductGrid';
 import { searchProductsByName } from '@/sanity/lib/products/searchProductsByName';
-import { NextPage } from 'next';
 import React from 'react';
 
-interface SearchPageProps {
-  searchParams: {
-    query?: string;
-  };
-}
-
-const SearchPage: NextPage<SearchPageProps> = async ({ searchParams }) => {
-  const query = searchParams?.query || ''; // Handle cases where query might be undefined
+// This is the correct way to type a page component in Next.js 15
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams?: { query?: string };
+}) {
+  const query = searchParams?.query || '';
   const products = await searchProductsByName(query);
 
   if (!products.length) {
@@ -38,9 +36,7 @@ const SearchPage: NextPage<SearchPageProps> = async ({ searchParams }) => {
       </div>
     </div>
   );
-};
-
-export default SearchPage;
+}
 
 
 // import ProductGrid from '@/components/ProductGrid';
