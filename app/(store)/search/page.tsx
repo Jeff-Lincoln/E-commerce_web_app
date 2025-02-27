@@ -4,16 +4,16 @@ import { type Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
 
-// Define the search params type with proper typing for Next.js 15
-interface SearchParams {
+// Define the search params type
+type SearchParams = {
   query?: string | string[];
   [key: string]: string | string[] | undefined;
-}
+};
 
+// Avoid using custom PageProps type - use the exact structure Next.js 15 expects
 export async function generateMetadata({
   searchParams,
 }: {
-  params: Record<string, never>;
   searchParams: SearchParams;
 }): Promise<Metadata> {
   const query = typeof searchParams.query === 'string' 
@@ -30,7 +30,6 @@ export async function generateMetadata({
 export default async function SearchPage({
   searchParams,
 }: {
-  params: Record<string, never>;
   searchParams: SearchParams;
 }) {
   const query = typeof searchParams.query === 'string' 
