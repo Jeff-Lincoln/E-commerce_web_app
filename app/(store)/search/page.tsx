@@ -4,13 +4,13 @@ import { type Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
 
-// Define the search params type
-type SearchParams = {
+// Define the search params type without extending PageProps
+interface SearchParams {
   query?: string | string[];
   [key: string]: string | string[] | undefined;
-};
+}
 
-// Avoid using custom PageProps type - use the exact structure Next.js 15 expects
+// Define the metadata generator with the correct type structure
 export async function generateMetadata({
   searchParams,
 }: {
@@ -27,6 +27,7 @@ export async function generateMetadata({
   };
 }
 
+// Define the page component using the correct Next.js 15 parameter structure
 export default async function SearchPage({
   searchParams,
 }: {
