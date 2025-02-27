@@ -4,17 +4,16 @@ import { type Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
 
-// Define the search params type without extending PageProps
-interface SearchParams {
+// Using a simple interface without any inheritance
+interface SearchQueryParams {
   query?: string | string[];
   [key: string]: string | string[] | undefined;
 }
 
-// Define the metadata generator with the correct type structure
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: SearchQueryParams;
 }): Promise<Metadata> {
   const query = typeof searchParams.query === 'string' 
     ? searchParams.query 
@@ -27,34 +26,34 @@ export async function generateMetadata({
   };
 }
 
-// Define the page component using the correct Next.js 15 parameter structure
-export default async function SearchPage({
+// In Next.js 15, page components use this pattern
+export default function Page({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: SearchQueryParams;
 }) {
-  const query = typeof searchParams.query === 'string' 
-    ? searchParams.query 
-    : Array.isArray(searchParams.query) 
-      ? searchParams.query[0] 
-      : '';
-  
-  const products = await searchProductsByName(query);
+  // Function to get the query string
+  const getQuery = () => {
+    return typeof searchParams.query === 'string' 
+      ? searchParams.query 
+      : Array.isArray(searchParams.query) 
+        ? searchParams.query[0] 
+        : '';
+  };
 
-  if (!products.length) {
-    return (
-      <div className="flex flex-col items-center justify-top min-h-screen p-4">
-        <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-4xl">
-          <h1 className="text-3xl font-bold mb-6 text-center">
-            No Products found for: {query}
-          </h1>
-          <p className="text-gray-600 text-center">
-            Try searching with different keywords.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  // Use the function to extract the query
+  const query = getQuery();
+  
+  // Using a promise in the component body instead of async/await
+  return (
+    <SearchResults query={query} />
+  );
+}
+
+// Separate component that handles async operations
+function SearchResults({ query }: { query: string }) {
+  // Use this client component pattern for data fetching
+  const productsPromise = searchProductsByName(query);
 
   return (
     <div className="flex flex-col items-center justify-top min-h-screen bg-gray-100 p-4">
@@ -62,7 +61,22 @@ export default async function SearchPage({
         <h1 className="text-3xl font-bold mb-6 text-center">
           Search Results for: {query}
         </h1>
-        <ProductGrid products={products} />
+        {/* Consume the promise with this pattern */}
+        {productsPromise.then(products => {
+          if (!products.length) {
+            return (
+              <div>
+                <h1 className="text-3xl font-bold mb-6 text-center">
+                  No Products found for: {query}
+                </h1>
+                <p className="text-gray-600 text-center">
+                  Try searching with different keywords.
+                </p>
+              </div>
+            );
+          }
+          return <ProductGrid products={products} />;
+        })}
       </div>
     </div>
   );
