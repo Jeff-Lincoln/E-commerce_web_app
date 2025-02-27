@@ -8,10 +8,10 @@ export const dynamic = 'force-dynamic';
 type SearchParams = { [key: string]: string | string[] | undefined };
 
 export async function generateMetadata({
-  _params,
   searchParams,
 }: {
-  _params: Record<string, never>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  params: Record<string, never>;
   searchParams: SearchParams;
 }): Promise<Metadata> {
   const query = typeof searchParams.query === 'string' ? searchParams.query : '';
@@ -21,10 +21,10 @@ export async function generateMetadata({
 }
 
 export default async function SearchPage({
-  _params,
   searchParams,
 }: {
-  _params: Record<string, never>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  params: Record<string, never>;
   searchParams: SearchParams;
 }) {
   const query = typeof searchParams.query === 'string' ? searchParams.query : '';
@@ -56,7 +56,6 @@ export default async function SearchPage({
     </div>
   );
 }
-
 // import ProductGrid from '@/components/ProductGrid';
 // import { searchProductsByName } from '@/sanity/lib/products/searchProductsByName';
 // import React from 'react';
